@@ -8,6 +8,8 @@
 
 | 2026-11-17 | Dense all-MiniLM-L6-v2 (title+condition+summary) | 2021 dev | 0.3519 | 0.2320 | 0.4588 |
 | 2026-11-17 | Hybrid BM25 + MiniLM (RRF, k=60) | 2021 dev | 0.4207 | 0.2573 | 0.4701 |
+| 2026-11-18 | Dense S-PubMedBert-MS-MARCO (title+condition+summary) | 2021 dev | 0.2574 | 0.1427 | 0.4168 |
+| 2026-11-18 | Hybrid BM25 + PubMedBERT (RRF, k=60) | 2021 dev | 0.3581 | 0.2000 | 0.4701 |
 
 Rule: tune on 2021, report final numbers on 2022 only once.
 
@@ -30,6 +32,9 @@ Rule: tune on 2021, report final numbers on 2022 only once.
 - Dense ties BM25 on nDCG but ranks eligible trials higher (P@10, MRR).
   Hybrid gives +19% nDCG over BM25: the two methods find different good trials.
 - Dense embeds only title+condition+summary (models read ~256 tokens max).
+- PubMedBERT (MS MARCO-tuned) underperformed general MiniLM by ~0.09 nDCG.
+  Hypothesis: it was trained on short web queries, and our queries are long patient notes.
+  Decision: keep BM25 + MiniLM hybrid. It's also ~6x faster to embed (~20 min vs ~2 hrs).
 
 ## Ideas to try
 - Dense retrieval (sentence-transformers + FAISS), general vs biomedical model
