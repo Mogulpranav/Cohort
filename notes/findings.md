@@ -10,6 +10,8 @@
 | 2026-11-17 | Hybrid BM25 + MiniLM (RRF, k=60) | 2021 dev | 0.4207 | 0.2573 | 0.4701 |
 | 2026-11-18 | Dense S-PubMedBert-MS-MARCO (title+condition+summary) | 2021 dev | 0.2574 | 0.1427 | 0.4168 |
 | 2026-11-18 | Hybrid BM25 + PubMedBERT (RRF, k=60) | 2021 dev | 0.3581 | 0.2000 | 0.4701 |
+| 2026-11-19 | Retrieval only, 4-way hybrid (10-patient pilot) | 2021 dev | 0.5069 | 0.3700 | 0.4537 |
+| 2026-11-19 | + Eligibility agent, gpt-oss-120b, re-rank top 10 | 2021 dev | 0.5215 | 0.3700 | 0.5535 |
 
 Rule: tune on 2021, report final numbers on 2022 only once.
 
@@ -35,6 +37,11 @@ Rule: tune on 2021, report final numbers on 2022 only once.
 - PubMedBERT (MS MARCO-tuned) underperformed general MiniLM by ~0.09 nDCG.
   Hypothesis: it was trained on short web queries, and our queries are long patient notes.
   Decision: keep BM25 + MiniLM hybrid. It's also ~6x faster to embed (~20 min vs ~2 hrs).
+- Agent pilot: 64% exact agreement with TREC (48/75 judged); "eligible" precision 76%.
+- Evidence quoted verbatim from note: 93.5% (fail), 91.0% (pass).
+- Cost: ~2,700 tokens and ~15.6 s per trial check; most tokens are hidden reasoning.
+- P@10 can't change when only the top 10 are re-ranked; need to check ranks 11-30.
+- Hit Groq free-tier daily limit after ~170K tokens.
 
 ## Ideas to try
 - Dense retrieval (sentence-transformers + FAISS), general vs biomedical model
